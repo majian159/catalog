@@ -6,6 +6,15 @@ name: CI Test
 # events but only for the master branch
 on:
   workflow_dispatch:
+    inputs:
+    version:
+      required: true
+    prerelease:
+      required: true
+      default: "true"
+    draft:
+      required: true
+      default: "true"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,4 +45,27 @@ jobs:
           kubectl kustomize $crdDir >> crds.yaml
           echo '---' >> crds.yaml
         done
-        cat crds.yaml
+
+    - name: Build
+      run: make build VERSION=${{ github.event.inputs.version }}
+    - name: Create a Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.event.inputs.version }}
+        release_name: v${{ github.event.inputs.version }}
+        body: released v${{ github.event.inputs.version }}
+        draft: ${{ github.event.inputs.draft }}
+        prerelease: ${{ github.event.inputs.prerelease }}
+
+    - name: Upload a Release Asset
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: crds.yaml
+        asset_name: crds.yaml
+        asset_content_type: application/yaml
