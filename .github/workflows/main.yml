@@ -46,8 +46,6 @@ jobs:
           echo '---' >> crds.yaml
         done
 
-    - name: Build
-      run: make build VERSION=${{ github.event.inputs.version }}
     - name: Create a Release
       id: create_release
       uses: actions/create-release@v1
