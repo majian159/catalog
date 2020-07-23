@@ -18,9 +18,10 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
-
-    - name: Build
-      run: make build
-
-    - name: Test
-      run: make test
+      
+    - name: Mv
+      run: |
+        for x in traits/*/
+        do
+          echo $x
+        done
