@@ -24,12 +24,13 @@ jobs:
 
     - name: Mv
       run: |
+        mkdir bin
         for x in traits/*/
         do
           name=${x%?}
           name=${name##*/}
           binFile="${x}bin/manager"
           [[ -f $binFile ]] || break
-          cp -a $binFile ./$name
+          cp -a $binFile ./bin/$name
         done
-        ls
+        ls bin
