@@ -19,9 +19,16 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
       
+    - name: Build
+      run: make build
+
     - name: Mv
       run: |
         for x in traits/*/
         do
-          echo $x
+          name=${x%?}
+          name=${name##*/}
+          binFile="${x}bin/manager"
+          [[ -f $binFile ]] || break
+          cp -a $binFile ./$name
         done
