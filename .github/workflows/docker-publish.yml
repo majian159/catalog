@@ -32,3 +32,4 @@ jobs:
           [[ -f $binFile ]] || break
           cp -a $binFile ./$name
         done
+        ls
